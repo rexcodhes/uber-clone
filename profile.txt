@@ -1,0 +1,1 @@
+[{"Name": "Krish", "Age": "15", "Rating": "4", "Rides_Booked": 0, "Money_Spent": 0}, {"Name": "Rudraksh", "Age": "14", "Rating": "5", "Rides_Booked": 0, "Money_Spent": 0}, {"Name": "dey", "Age": "15", "Rating": "3", "Rides_Booked": 5, "Money_Spent": 6875.0}]
