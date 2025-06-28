@@ -1,1 +1,0 @@
-[{"current_location": "Kolkata", "destination": "Pune", "distance": 340, "vehicle": "Car", "fare": 4250.0}, {"current_location": "Kolkata", "destination": "Pune", "distance": 340, "vehicle": "Car", "fare": 4250.0}]
