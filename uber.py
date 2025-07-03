@@ -48,6 +48,14 @@ def list_all_rides(rides):
         print(f"{index}.{rides['current_location']}, Destination: {rides['destination']},Distance: {rides['distance']}, Vehicle: {rides['vehicle']}, Fare: {rides['fare']}")
         print("*" * 100)
 
+def list_all_profiles(profile):
+     print("\n")
+     print("*" * 100)
+     for index, profile in enumerate(profile, start=1):
+        print(f"{index}.{profile['Name']}, Age: {profile['Age']}, Rating: {profile['Rating']}, Rides Booked: {profile['Rides_Booked']}, Money Spent {profile['Money_Spent']}")
+        print("*" * 100)
+
+
 def open_map():
     print(map_keys)
 
@@ -58,8 +66,17 @@ def book_ride(map, rides):
     from_where = input("From where: ")
     where_to = input("Where to: ")
     
-    map_distance = abs(map[where_to] - map[from_where]) 
+    try:
+        map_distance = abs(map[where_to] - map[from_where])
+    except KeyError:
+        print("Invalid city entered.")
+        return
+
     vehicle = input("What type of vehicle would you like: ")
+    if vehicle not in vehicles:
+        print("Invalid vehicle type.")
+        return
+
     base_fare = map_distance * 10
     final_fare = base_fare * vehicles[vehicle]
     
@@ -75,15 +92,19 @@ def book_ride(map, rides):
     
     elif confirmation_lower == "no":
         print("Your ride has not been placed")
-
-    else: print("Invalid input")
+    else:
+        print("Invalid input")
 
 def cancel_ride(rides):
     list_all_rides(rides)
-    cancel = int(input("Which ride do you want to cancel? "))
-    ride = rides[cancel-1]
+    try:
+        cancel = int(input("Which ride do you want to cancel? "))
+    except ValueError:
+        print("Please enter a valid number.")
+        return
 
     if 1 <= cancel <= len(rides):
+        ride = rides[cancel-1]
         del rides[cancel-1]
         save_data_helper(rides)
         print(f"{cancel}. {ride['current_location']} to {ride['destination']}, distance covered {ride['distance']}kms, for rupees {ride['fare']}, in a {ride['vehicle']} has been cancelled")
@@ -94,46 +115,79 @@ def history_rides(rides):
     print("Here is the history of all of your past rides: ")
     list_all_rides(rides)
 
-def create_profile(rides,profile, p_rides_booked):
-    
+def create_profile(rides,profile):
+
     p_name = input("What is your name? ")
     p_age = input("What is your age? ")
     p_ratings = input("What is your rating? ")
     p_rides_booked = len(rides)
     p_money_spent = sum(ride['fare'] for ride in rides)
-    profile.append({'Name': p_name, 
+    profile.append({
+                    'Name': p_name, 
                     'Age': p_age, 
                     'Rating': p_ratings, 
                     'Rides_Booked':p_rides_booked, 
                     'Money_Spent': p_money_spent})
+    
     save_profile_helper(profile)
+    
+    
 
 def update_profile(profile):
     print(profile)
-    id = int(input("Enter your profile id to update: "))
+    try:
+        id = int(input("Enter your profile id to update: "))
+    except ValueError:
+        print("Please enter a valid number.")
+        return
+
     if 1 <= id <= len(profile):
-     profiles = profile[id-1]
-     name = input("Enter your new name ")
-     age = input("Enter your new age ")
-     rating = input("Enter your new rating ")
-     p_rides_booked = profiles['Rides_Booked']
-     money_spent = profiles['Money_Spent']
-     profile[id - 1] = {'Name': name, 'Age': age, 'Rating': rating, 'Rides_Booked': p_rides_booked, 'Money_Spent': money_spent} 
-     save_profile_helper(profile)
+        profiles = profile[id-1]
+        name = input("Enter your new name ")
+        age = input("Enter your new age ")
+        rating = input("Enter your new rating ")
+        p_rides_booked = profiles['Rides_Booked']
+        money_spent = profiles['Money_Spent']
+        profile[id - 1] = {'Name': name, 'Age': age, 'Rating': rating, 'Rides_Booked': p_rides_booked, 
+                           'Money_Spent': money_spent} 
+        save_profile_helper(profile)
     else:
         print("Invalid id selected")
 
-def delete_profile():
-    pass
+def delete_profile(profile):
+    list_all_profiles(profile)
+    try:
+        choice = int(input("Enter the profile id which you want to delete: "))
+    except ValueError:
+        print("Please enter a valid number.")
+        return
 
-def open_profile():
-    pass
+    if 1 <= choice <= len(profile):
+        del profile[choice-1]
+        print("The profile has been deleted successfully")
+        save_profile_helper(profile)
+    else: 
+        print("Invalid profile selected")
+    
+
+def open_profile(profile):
+    list_all_profiles(profile)
+    try:
+        choice = int(input("Enter the profile id to open: "))
+    except ValueError:
+        print("Please enter a valid number.")
+        return
+
+    if 1 <= choice <= len(profile):
+        print(profile[choice-1])
+    else:
+        print("Invalid profile id selected")
 
 def main():
     rides = load_data()
     profile = load_data_profile()
 
-    while(True):
+    while True:
         print("Uber App")
         print("Type 1 to look at the map")
         print("Type 2 to book a ride")
@@ -142,7 +196,14 @@ def main():
         print("Type 5 to create a profile")
         print("Type 6 to update a profile")
         print("Type 7 to delete a profile")
-        choice = int(input("Enter your choice: "))
+        print("Type 8 to open a profile")
+        print("Type 9 to exit the program")
+        try:
+            choice = int(input("Enter your choice: "))
+        except ValueError:
+            print("Please enter a valid number.")
+            continue
+
         if choice == 1:
             open_map()
 
@@ -156,10 +217,20 @@ def main():
             history_rides(rides)
         
         elif choice == 5:
-            create_profile(rides,profile, p_rides_booked)
+            create_profile(rides,profile)
         
         elif choice == 6:
             update_profile(profile)
+
+        elif choice == 7:
+            delete_profile(profile)
+
+        elif choice == 8:
+            open_profile(profile)
+
+        elif choice == 9:
+            print("Goodbye!")
+            break
 
 if __name__ == "__main__":
     main()
