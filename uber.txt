@@ -1,1 +1,1 @@
-[{"Id": 1, "Name": "Sdey", "Age": "11", "Rating": "4", "Rides_Booked": 5, "Money_Spent": 6875.0}]
+[{"current_location": "Delhi", "destination": "Bangalore", "distance": 50, "vehicle": "Car", "fare": 625.0}]
